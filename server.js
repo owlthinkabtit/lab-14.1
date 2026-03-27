@@ -5,7 +5,7 @@ import User from './models/User.js'
 import '../Lab-14.1/userAuth.js'
 import mongoose from 'mongoose'
 
-const experation = '24h'
+const expiration = '24h'
 const secret = process.env.JWT_SECRET
 
 const app = express()
@@ -32,19 +32,19 @@ app.post('/api/users/login', async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email })
     if (!user) {
-      res.status(400).json({ message: "Incorrect email or password, try again." })
+      return res.status(400).json({ message: "Incorrect email or password, try again." })
     }
 
-    const correct = await user.isCorrectPassword(req.body.password)
-    if (!correct) {
-      res.status(400).json({ message: "Incorrect email or password, try again." })
+    const isCorrect = await user.isCorrectPassword(req.body.password)
+    if (!isCorrect) {
+      return res.status(400).json({ message: "Incorrect email or password, try again." })
     }
     const payload = {
       id: user._id,
       email: user.email,
       username: user.username
     }
-    const token = jwt.sign({ data: payload }, secret, { expiresIn: experation })
+    const token = jwt.sign({ data: payload }, secret, { expiresIn: expiration })
 
     console.log(token)
 
